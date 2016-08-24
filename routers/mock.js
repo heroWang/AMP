@@ -64,10 +64,15 @@ Mock.all('*', async (ctx, next) => {
 	const apiDeatil = formatRequestUrl(ctx.request.url);
 	const Url = global.dbHandle.getModel('urls');
 
+	let allParams = {};
+	mixin(allParams, ctx.query);
+	mixin(allParams, ctx.body);
+
 	const result = await Url.find({
 		parent_project: apiDeatil.project_id,
 		url: apiDeatil.api_url,
-		method: ctx.method.toLocaleLowerCase()
+		method: ctx.method.toLocaleLowerCase(),
+		name:allParams.action,
 	});
 
 	const checkResult = checkReqParams(ctx, result[0]);
