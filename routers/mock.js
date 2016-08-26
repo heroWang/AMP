@@ -29,7 +29,10 @@ const formatRequestUrl = (url) => {
 const errMap = {
 	0: '参数类型有误',
 	1: '缺少必要参数',
-	2: '没有符合要求的返回示例'
+	2: '没有符合要求的返回示例',
+	3: '缺少action',
+	4: '缺少data',
+	5: '缺少sessionId'
 }
 
 const checkReqParams = (ctx, result) => {
@@ -44,9 +47,31 @@ const checkReqParams = (ctx, result) => {
 		}
 	}
 
+	if(!allParams['action']){
+		return {
+			err: true,
+			map: 3
+		}
+	}
+
+	if(!allParams['data']){
+		return {
+			err: true,
+			map: 4
+		}
+	}
+
+	if(!allParams['sessionId']){
+		return {
+			err: true,
+			map: 5
+		}
+	}
+
+	var dataFields = JSON.parse(allParams['data']);
 	for(let i = 0; i < result.request_params.length; i++){
 		const _curr = result.request_params[i];
-		if(_curr.required === '1' && allParams[_curr['key']] === undefined){
+		if(_curr.required === '1' && dataFields[_curr['key']] === undefined){
 			return {
 				err: true,
 				map: 1
